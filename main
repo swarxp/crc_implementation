@@ -1,0 +1,73 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void crc(const vector<int> &div, int div_n, vector<int> &data, int n) {
+    // Buffer
+    int buffer_len = n + div_n - 1;
+    vector<int> buff(buffer_len, 0);
+
+    // Copy to buffer
+    for (int i = 0; i < n; i++) {
+        buff[i] = data[i];
+    }
+
+    // CRC calculation
+    for (int i = 0; i < n; i++) {
+        if (buff[i] == 0) {
+            continue;
+        } else {
+            for (int j = 0; j < div_n; j++) {
+                buff[i + j] ^= div[j];
+            }
+        }
+    }
+
+    // Update the data with the remainder in buffer
+    for (int i = n; i < n + div_n - 1; i++) {
+        data[i] = buff[i];
+    }
+}
+
+int main() {
+    // Input the generic polynomial length
+    cout << "Enter the length of the generic polynomial: ";
+    int div_n;
+    cin >> div_n;
+
+    // Input the generic polynomial
+    cout << "Enter the elements of the generic polynomial: ";
+    vector<int> div(div_n, 0);
+    for (int i = 0; i < div_n; i++) {
+        cin >> div[i];
+    }
+
+    // Input the length of the message
+    cout << "Enter the length of the message: ";
+    int n;
+    cin >> n;
+
+    // Input the message
+    cout << "Enter the elements of the message: ";
+    vector<int> data(n + div_n - 1, 0); // Ensure space for remainder
+    for (int i = 0; i < n; i++) {
+        cin >> data[i];
+    }
+
+    // Perform CRC calculation
+    crc(div, div_n, data, n);
+
+    // Print the codeword and remainder
+    cout << "Codeword: ";
+    for (int i = 0; i < n; i++) {
+        cout << data[i];
+    }
+
+    cout << "\nRemainder: ";
+    for (int i = n; i < n + div_n - 1; i++) {
+        cout << data[i];
+    }
+    cout << endl;
+
+    return 0;
+}
